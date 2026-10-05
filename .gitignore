@@ -1,0 +1,89 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+# Preserve Hackathon Audit Log
+!docs/logs.txt
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+*.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Key stores, Certificates, and Credentials
+*.pem
+*.key
+*.crt
+*.cert
+*.pfx
+*.p12
+*.keystore
+*.jks
+secrets/
+keys/
+credentials.json
+service-account*.json
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.pnpm-store/
+
+# Build and production outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vite/
+*.tsbuildinfo
+
+# Database / SQLite / Local storage
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+prisma/*.db*
+*.sql.gz
+
+# Coverage and test output
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+cypress/videos/
+cypress/screenshots/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Temporary and cache
+tmp/
+temp/
+.cache/
+.eslintcache
+.stylelintcache

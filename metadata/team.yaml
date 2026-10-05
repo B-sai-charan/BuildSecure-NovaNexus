@@ -4,16 +4,16 @@
 # - If your team has 4 members: provide all 4 members.
 
 team:
-  team_id: ""
-  name: ""
-  repository: "" # URL of the newly created GitHub repository for this project
+  team_id: "22"
+  name: "NovaNexus"
+  repository: "https://github.com/B-sai-charan/BuildSecure-NovaNexus"
 
 members:
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
+  - name: "AILA PRANATHI"
+    email: "pranathigoud8317@gmail.com"
+  - name: "SAI CHARAN BOGA"
+    email: "bsaicharan52@gmail.com"
+  - name: "DHEEKSHITA ADUPA"
+    email: "dheekshita3003@gmail.com"
+  - name: "AMIRISHETTY HARSHA"
+    email: "harshaamirishetty@gmail.com"

@@ -1,0 +1,30 @@
+{
+  "name": "fintrack-buildsecure",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FinTrack — Secure Full-Stack Financial Intelligence & Asset Tracking Platform (ABHEDYA BuildSecure)",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": [
+    "cybersecurity",
+    "owasp-asvs",
+    "nist-sp-800-63b",
+    "fintrack",
+    "prisma",
+    "express",
+    "react",
+    "vite"
+  ],
+  "author": "NovaNexus (Team 22)",
+  "license": "MIT"
+}

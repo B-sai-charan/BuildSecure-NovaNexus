@@ -1,9 +1,9 @@
 # Project Approach & Architecture — Build Secure 24
 
-**Team ID:** 
-**Project Name:** 
-**Team Size:** [2 or 4 Members]
-**Primary Track / Domain:** 
+**Team ID:** 22
+**Project Name:** FinTrack — Secure Financial Intelligence & Asset Tracking Platform
+**Team Size:** 4 Members
+**Primary Track / Domain:** Cybersecurity / Secure Full-Stack Fintech Platform
 
 ---
 

@@ -187,3 +187,56 @@ Actions Taken:
 * Staged and committed changes with commit message 'feat(server): define secure Prisma schema, auth middleware, and rate limiters'
 * Pushed commit to remote main branch
 
+================================================================================
+[2026-10-05T19:35:07+05:30] Step 3: Secure Core Backend APIs (Auth & Transactions)
+================================================================================
+User Prompt (verbatim):
+Please execute Step 3: Secure Core Backend APIs (Auth & Transactions).
+
+1. In the `server/src` directory, set up the main Express application (`app.js` and `index.js`). Integrate `helmet` for secure HTTP headers, `cors`, and global error handling.
+2. Create Zod validation schemas in `server/src/utils/validators.js` for:
+   - User Registration (strong password requirements)
+   - User Login
+   - Transaction Creation (type, amount, category, date)
+3. Implement `server/src/controllers/authController.js`:
+   - `register`: Validate input via Zod, hash password (bcrypt salt 12), and save the user.
+   - `login`: Apply the rate limiter middleware here. Verify password, generate a 15-minute JWT, and return it.
+4. Implement `server/src/controllers/transactionController.js`:
+   - `createTransaction`, `getTransactions`, `deleteTransaction`.
+   - CRUCIAL SECURITY RULE: Every single Prisma query here must be strictly owner-scoped using the `req.user.id` from the auth middleware (e.g., `where: { id: req.params.id, userId: req.user.id }`). No exceptions.
+5. Set up the corresponding Express routes in `server/src/routes/authRoutes.js` and `server/src/routes/transactionRoutes.js`, and mount them in `app.js`.
+6. Stage all new files and commit with the exact message:
+   `feat(server): implement secure auth and owner-scoped transaction APIs`
+7. Push the commit to the `main` branch.
+
+Once finished, display a brief summary of the mounted endpoints and provide the `git status` and `git log -1`.
+
+Agent Response:
+Implemented Express application in server/src/app.js with Helmet headers, CORS policies, body size limiters, rate limiting, and centralized error handling. Created Zod schemas in validators.js enforcing NIST SP 800-63B password complexity and strict transaction parameters. Implemented authController.js with bcrypt salt 12 hashing, timing attack protection, and 15-minute JWT issuance. Implemented transactionController.js with 100% owner-scoped Prisma queries (where: { id, userId }) eliminating IDOR vulnerabilities. Mounted auth and transaction routes, validated syntax, committed, and pushed to main branch.
+
+Agent Response Summary:
+Built secure Express application with comprehensive middleware pipeline (Helmet, CORS, rate limiters, Zod validators). Implemented robust authentication controllers and owner-scoped transaction management APIs preventing IDOR attacks. Staged, committed, and synced changes to GitHub.
+
+Commit SHA:
+0a798d7
+
+Files Modified / Created:
+* server/src/utils/prisma.js (Created)
+* server/src/utils/validators.js (Created)
+* server/src/controllers/authController.js (Created)
+* server/src/controllers/transactionController.js (Created)
+* server/src/routes/authRoutes.js (Created)
+* server/src/routes/transactionRoutes.js (Created)
+* server/src/app.js (Created)
+* server/src/index.js (Created)
+* server/src/server.js (Created)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Created singleton Prisma database client
+* Defined Zod validation schemas for registration, login, and transactions
+* Implemented auth controller with bcrypt hashing (salt 12) and JWT issuance (15m)
+* Implemented transaction controller with strict owner-scoped queries
+* Mounted routes in Express app with Helmet, CORS, and error handlers
+* Staged, committed with message 'feat(server): implement secure auth and owner-scoped transaction APIs', and pushed to main
+

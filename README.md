@@ -1,6 +1,6 @@
 # FinTrack — Zero-Trust Financial Intelligence & Asset Vault
 
-> **ABHEDYA — Build Secure 24 Hackathon (VBIT Cybersecurity Forum)**  
+> **ABHEDYA — Build Secure Hackathon (VBIT Cybersecurity Forum)**  
 > **Team Name:** NovaNexus | **Team ID:** 22  
 > **Repository:** [https://github.com/B-sai-charan/BuildSecure-NovaNexus](https://github.com/B-sai-charan/BuildSecure-NovaNexus)
 

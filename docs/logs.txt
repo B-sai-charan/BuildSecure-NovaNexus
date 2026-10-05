@@ -240,3 +240,54 @@ Actions Taken:
 * Mounted routes in Express app with Helmet, CORS, and error handlers
 * Staged, committed with message 'feat(server): implement secure auth and owner-scoped transaction APIs', and pushed to main
 
+================================================================================
+[2026-10-05T19:40:03+05:30] Step 4: Secure AI Key Management (AES-256-GCM) & Insight Generation
+================================================================================
+User Prompt (verbatim):
+Please execute Step 4: Secure AI Key Management (AES-256-GCM) & Insight Generation.
+
+1. Create `server/src/utils/encryption.js` using Node's native `crypto` module:
+   - Implement `encryptKey(text)` and `decryptKey(encryptedText, iv, authTag)` using the `aes-256-gcm` algorithm.
+   - It must rely on a 32-byte `ENCRYPTION_KEY` stored in `.env`. Throw a fatal error if this key is missing.
+2. Create `server/src/controllers/aiController.js`:
+   - `saveAiKey`: Receive a raw API key from the user, pass it through `encryptKey`, and save the resulting `aiKeyEncrypted`, `aiKeyIv`, and `aiKeyAuthTag` to the `User` record. Return a success message (DO NOT return the raw or encrypted key to the client).
+   - `generateInsight`: 
+      a) Fetch the user's transactions for the current month (owner-scoped `req.user.id`).
+      b) Retrieve the user's `aiKeyEncrypted`, `aiKeyIv`, and `aiKeyAuthTag` from the database.
+      c) Decrypt the key strictly in-memory.
+      d) Construct a prompt summarizing the user's spending categories and totals.
+      e) Use the decrypted key to make a secure server-to-server HTTP request to the AI provider (assume a standard OpenAI/Google Gemini compatible REST endpoint). 
+      f) Append the exact disclaimer "Note: This is not financial advice." to the final response before returning it to the client.
+3. Create `server/src/routes/aiRoutes.js` protecting both routes with `authenticateToken`.
+4. Mount `/api/ai` in `server/src/app.js`.
+5. Update `server/.env.example` to include a placeholder `ENCRYPTION_KEY`.
+6. Stage all new and modified files and commit with the exact message:
+   `feat(server): implement secure AES-256-GCM AI key storage and insight generation`
+7. Push the commit to the `main` branch.
+
+Once finished, explain briefly how the AES-256-GCM implementation prevents the database administrator from stealing the user's API key, and provide the `git status` and `git log -1`.
+
+Agent Response:
+Implemented AES-256-GCM symmetric authenticated encryption in server/src/utils/encryption.js with 96-bit random IVs and 128-bit auth tags. Created aiController.js featuring secure encrypted key storage at rest without frontend exposure, in-memory decryption, server-to-server AI communication, and mandatory financial advice disclaimer enforcement. Mounted /api/ai routes with JWT guards, updated .env.example, staged, committed, and pushed to main.
+
+Agent Response Summary:
+Configured AES-256-GCM encryption at rest for user AI API keys with authenticated integrity verification. Implemented AI financial insight generation controller that executes owner-scoped transaction aggregation and server-to-server AI synthesis with strict disclaimer formatting. Committed and synced to GitHub.
+
+Commit SHA:
+00e5699
+
+Files Modified / Created:
+* server/src/utils/encryption.js (Created)
+* server/src/controllers/aiController.js (Created)
+* server/src/routes/aiRoutes.js (Created)
+* server/src/app.js (Modified)
+* server/.env.example (Modified)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Implemented AES-256-GCM encryption/decryption functions with AuthTag validation
+* Created AI controller for key persistence and monthly spending insight generation
+* Protected /api/ai endpoints with JWT authentication middleware
+* Mounted AI routes in Express app and updated server/.env.example
+* Staged, committed with message 'feat(server): implement secure AES-256-GCM AI key storage and insight generation', and pushed to main
+

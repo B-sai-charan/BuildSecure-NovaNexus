@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { apiRateLimiter } from './middleware/rateLimiter.js';
 
 dotenv.config();
@@ -75,6 +76,7 @@ app.get('/api/health', (req, res) => {
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {

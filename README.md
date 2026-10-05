@@ -1,82 +1,152 @@
-# Build Secure 24 — Participant Starter Repository
+# FinTrack — Zero-Trust Financial Intelligence & Asset Vault
 
-**Abhedya — VBIT Cybersecurity Forum, Vignana Bharathi Institute of Technology, Hyderabad**
-
-Welcome to the official Build Secure 24 starter repository.
-
----
-
-## 1. Challenge Overview
-
-- **Schedule**: October 5, 2026, 11:00 AM IST to October 6, 2026, 11:00 AM IST
-- **Duration**: Exactly 24 Hours
-- **Submission Deadline**: October 6, 2026, 11:00 AM IST (`2026-10-06T11:00:00+05:30`)
-- **Team Size**: Exactly 2 or 4 participants per team (teams of 1, 3, or >4 are not permitted)
-- **Core Requirement**: All project code must be created live during the 24-hour hackathon. Importing pre-built or third-party repositories is strictly prohibited.
+> **ABHEDYA — Build Secure 24 Hackathon (VBIT Cybersecurity Forum)**  
+> **Team Name:** NovaNexus | **Team ID:** 22  
+> **Repository:** [https://github.com/B-sai-charan/BuildSecure-NovaNexus](https://github.com/B-sai-charan/BuildSecure-NovaNexus)
 
 ---
 
-## 2. Repository Structure
+## 1. Project Overview & Security Mandate
+
+**FinTrack** is an enterprise-grade secure personal finance and financial telemetry platform engineered with **Security by Design** in compliance with:
+- **OWASP ASVS 4.0 (Level 2/3)**: Broken Object Level Authorization (IDOR) elimination via 100% owner-scoped database queries (`where: { id, userId }`).
+- **NIST SP 800-63B**: Strong password complexity verification and authenticated session controls.
+- **AES-256-GCM (AEAD)**: Symmetric encryption at rest for Bring-Your-Own AI API keys (Google Gemini / OpenAI) with 96-bit random IVs and 128-bit Auth Tag verification.
+- **Defense in Depth**: 15-minute short-lived JWTs, `sessionStorage` XSS isolation, IP rate-limiting, Helmet CSP, and Zod input validation schemas.
+
+---
+
+## 2. Quickstart & Local Evaluation Guide (For Judges)
+
+Follow these steps to run the complete FinTrack monorepo locally.
+
+### Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **PostgreSQL**: Running locally or a cloud database instance (e.g., Supabase / Neon / Render)
+
+---
+
+### Step 1: Clone and Install Dependencies
+
+```bash
+git clone https://github.com/B-sai-charan/BuildSecure-NovaNexus.git
+cd BuildSecure-NovaNexus
+
+# Install all monorepo dependencies (client + server)
+npm install
+```
+
+---
+
+### Step 2: Configure Server Environment Variables
+
+Create the `.env` file in the `server/` directory:
+
+```bash
+# Copy example configuration template
+cp server/.env.example server/.env
+```
+
+Ensure `server/.env` contains valid values:
+
+```env
+PORT=5000
+NODE_ENV=development
+
+# Database Connection (Replace with your PostgreSQL credentials)
+DATABASE_URL="postgresql://postgres:password@localhost:5432/fintrack?schema=public"
+
+# Authentication & Security Secrets
+JWT_SECRET="change-me-to-a-secure-random-secret-key-at-least-64-characters-long"
+JWT_EXPIRES_IN="15m"
+
+# Symmetric Master Encryption Key (32 bytes / 256-bit hex encoded)
+ENCRYPTION_KEY="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+ENCRYPTION_MASTER_KEY="0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+# CORS Allowed Origins
+CORS_ORIGIN="http://localhost:5173"
+```
+
+---
+
+### Step 3: Database Migration & Synthetic Data Seeding
+
+Push the Prisma schema to your PostgreSQL database and run the synthetic data seeder:
+
+```bash
+# Generate Prisma client and push schema tables (users, transactions, budgets)
+npx prisma db push --schema=server/prisma/schema.prisma
+
+# Seed database with demo user, 30 days of transactions, and category budgets
+npm run seed --workspace=server
+```
+
+---
+
+### Step 4: Run Development Servers
+
+Start both backend and frontend concurrently:
+
+```bash
+# Option A: Start all workspaces simultaneously
+npm run dev
+
+# Option B: Run in separate terminals
+npm run dev:server   # Starts Express API at http://localhost:5000
+npm run dev:client   # Starts Vite React Frontend at http://localhost:5173
+```
+
+Open your browser at **`http://localhost:5173`**.
+
+---
+
+## 3. Demo Credentials
+
+For rapid judge evaluation, use the pre-seeded account:
+
+| Field | Value |
+| :--- | :--- |
+| **Email** | `demo@novanexus.com` |
+| **Password** | `SecurePass!123` |
+| **Pre-loaded Data** | 10 realistic monthly transactions + 5 category budgets |
+
+---
+
+## 4. Repository Structure
 
 ```
-├── AGENTS.md                  ← AI agent behavioral contract & logging gate
-├── README.md                  ← This file
-├── PARTICIPANT_RULES.md       ← Competition rules
-│
-├── docs/                      ← Autonomous documentation layer
-│   ├── APPROACH.md            ← Problem breakdown & architecture approach
-│   └── logs.txt               ← Turn-by-turn prompt, file location & timeline log
-│
-├── metadata/                  ← Submission metadata
-│   ├── team.yaml              ← Team information (2 or 4 members)
-│   └── submission.yaml        ← Final submission details
-│
-├── src/                       ← Application source code directory
-└── deployment/                ← Deployment configuration directory
-    └── README.md              ← Deployment record
+├── .agents/
+│   └── rules/
+│       └── security-guidelines.md  ← Enforced security constraints & OWASP rules
+├── client/                         ← React 18 + Vite + Tailwind CSS Frontend
+│   ├── src/
+│   │   ├── api/axiosConfig.js      ← sessionStorage JWT injection & 401 handling
+│   │   ├── components/             ← Navbar, AuthGuard, AiAssistant
+│   │   └── pages/                  ← Login, Register, Dashboard, Transactions, Settings
+├── server/                         ← Node.js + Express + Prisma Backend
+│   ├── prisma/
+│   │   ├── schema.prisma           ← Relational PostgreSQL Schema
+│   │   └── seed.js                 ← Database Seeder Script
+│   └── src/
+│       ├── controllers/            ← authController, transactionController, aiController
+│       ├── middleware/             ← auth.js (JWT verify), rateLimiter.js (5 req/15m)
+│       ├── routes/                 ← authRoutes, transactionRoutes, aiRoutes
+│       └── utils/                  ← encryption.js (AES-256-GCM), validators.js (Zod)
+├── docs/
+│   ├── ABHEDYA_Technical_Security_Documentation.md ← Official Hackathon Security Report
+│   ├── APPROACH.md                 ← Problem breakdown & architecture approach
+│   └── logs.txt                    ← Autonomous turn-by-turn prompt & file audit log
+└── metadata/
+    ├── team.yaml                   ← Team 22 (NovaNexus) registration info
+    └── submission.yaml             ← Submission metadata
 ```
 
 ---
 
-## 3. Getting Started
+## 5. Security & Technical Documentation
 
-### Step 1: Team Registration & GitHub Repository Setup
-1. Create a new GitHub repository for your team's project.
-2. Fill in `metadata/team.yaml` with your assigned Team ID, team name, your newly created GitHub repository URL (`team.repository`), and all 2 or 4 member details.
-
-### Step 2: AI Agent Onboarding
-When you open this repository in an AI coding assistant (Cursor, Windsurf, Claude Code, Copilot, ChatGPT, etc.):
-- The agent will read `AGENTS.md`, greet your team, recite the competition ground rules, display the remaining time until **October 6, 2026, 11:00 AM IST**, and collect your `I agree` confirmation.
-- Once confirmed, the agent records your team details and GitHub repository URL, and configures your Git remote origin.
-- The agent will **automatically log every prompt, the full agent response, the Git commit SHA, exact file changes, and timeline** in `docs/logs.txt` as you build.
-
-### Step 3: Build & Ship with Continuous Push
-- Author your application code inside `src/`.
-- After each prompt, changes are committed with the exact commit SHA recorded in `docs/logs.txt`, and can be pushed directly to your team's GitHub repository (`git push origin main`).
-- Document your technical approach in `docs/APPROACH.md`.
-- Deploy your application and record live details in `deployment/README.md`.
-- Update `metadata/submission.yaml` with your final commit SHA before the **October 6, 2026, 11:00 AM IST** deadline.
-
----
-
-## 4. Multi-Device Team Collaboration
-
-All 4 team members can work simultaneously across separate laptops:
-
-1. **Clone**: Every teammate clones your team's GitHub repository to their device.
-2. **Syncing Progress**:
-   - When one teammate finishes a feature or prompt:
-     ```bash
-     git add src/ docs/
-     git commit -m "feat: implement feature description"
-     git push origin main
-     ```
-   - Other teammates pull the latest updates:
-     ```bash
-     git pull origin main
-     ```
-3. **Agent Continuity**: When a teammate opens the updated repo on their laptop, their AI assistant automatically reads `docs/APPROACH.md` and recent `docs/logs.txt` entries, immediately picking up where the team left off.
-
----
-
-*Build freely. Use AI freely. Secure what you build. Document what you claim. Prove what you implemented.*
+For the full 9-section technical report, threat model, cryptographic proof, and 5 security test cases, please inspect:
+- [**docs/ABHEDYA_Technical_Security_Documentation.md**](docs/ABHEDYA_Technical_Security_Documentation.md)
+- [**docs/APPROACH.md**](docs/APPROACH.md)
+- [**docs/logs.txt**](docs/logs.txt)

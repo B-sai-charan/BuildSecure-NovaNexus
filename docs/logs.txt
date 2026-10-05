@@ -429,5 +429,34 @@ Actions Taken:
 * Updated metadata/submission.yaml with commit SHA 896a914eadf5191a230673240c6c29796dbd507d
 * Staged, committed with message 'chore: sync submission metadata and final audit logs', and pushed to main
 
+================================================================================
+[2026-10-05T20:51:07+05:30] Diagnose Backend 500 & Check Database Configuration
+================================================================================
+User Prompt (verbatim):
+The frontend is throwing an "Internal server error occurred" (500) when trying to log in with demo@novanexus.com. Please diagnose and fix the backend setup:
 
+1. Check `server/.env`. Verify that `DATABASE_URL`, `JWT_SECRET`, and `ENCRYPTION_KEY` are populated with valid data.
+2. If `DATABASE_URL` is missing or invalid, immediately prompt me to provide a valid PostgreSQL connection string (like Neon or Supabase). Do not proceed until I provide it.
+3. Once the environment variables are confirmed, run `npx prisma db push --schema=server/prisma/schema.prisma` to ensure the tables exist.
+4. Run the seed script to ensure `demo@novanexus.com` exists.
+5. Review `server/src/controllers/authController.js` and add a `console.error(error)` inside the catch block of the `login` function so the actual stack trace is logged to the terminal instead of just returning a generic 500.
+6. Start the server and run a simulated `curl` or `fetch` request to `/api/auth/login` to confirm it returns a 200 OK with a token.
 
+Agent Response:
+Inspected `server/.env` and found that it does not exist in the project. Added error logging with `console.error('Login error:', error)` inside the `catch` block of `server/src/controllers/authController.js` to ensure runtime stack traces are logged. Identified that `DATABASE_URL` is missing and prompted the user for a valid PostgreSQL connection string before proceeding with `prisma db push`, seeding, and server execution.
+
+Agent Response Summary:
+Checked server environment configuration and added detailed error logging to the login controller. Found `server/.env` missing, prompting the user for a valid PostgreSQL connection string as required before running database migrations and verification tests.
+
+Commit SHA:
+c22891a
+
+Files Modified / Created:
+* server/src/controllers/authController.js (Modified)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Checked for existence of server/.env
+* Added console.error logging in login controller catch block in server/src/controllers/authController.js
+* Staged and committed changes
+* Prompted user for valid PostgreSQL DATABASE_URL connection string

@@ -139,3 +139,51 @@ Actions Taken:
 * Scaffolded client/, server/, package.json, and server/.env.example
 * Staged and committed changes with commit message 'feat(init): setup secure repository structure, gitignore, and security guidelines'
 
+================================================================================
+[2026-10-05T19:31:16+05:30] Step 2: Database Schema & Authentication Middleware
+================================================================================
+User Prompt (verbatim):
+Please execute Step 2: Database Schema & Authentication Middleware.
+
+1. Navigate to the `server/` directory and initialize Prisma for PostgreSQL.
+2. Define the `schema.prisma` with strict relational mapping to enforce owner-scoped data:
+   - `User`: id (UUID), email (unique), passwordHash, role (default 'USER'), aiKeyEncrypted (String?), aiKeyIv (String?), createdAt, updatedAt.
+   - `Transaction`: id, amount (Float), type (INCOME/EXPENSE), category, description, date, userId (Relation to User).
+   - `Budget`: id, category, amountLimit (Float), userId (Relation to User).
+3. Create the auth middleware `server/src/middleware/auth.js`:
+   - Extract and verify the JWT signature.
+   - Reject expired or malformed tokens with a strict 401 Unauthorized.
+   - Attach the validated payload (userId, role) to the `req` object for downstream owner-scoped queries.
+4. Create `server/src/middleware/rateLimiter.js` using `express-rate-limit` to restrict authentication endpoints to a maximum of 5 requests per 15 minutes per IP.
+5. Ensure all necessary dependencies (prisma, @prisma/client, jsonwebtoken, bcrypt, express-rate-limit) are installed in the `server` workspace.
+6. Stage all new files and commit with the exact message:
+   `feat(server): define secure Prisma schema, auth middleware, and rate limiters`
+7. Push the commit to the `main` branch.
+
+Once finished, display the contents of `schema.prisma`, `git status`, and `git log -1`.
+
+Agent Response:
+Configured PostgreSQL Prisma schema with strict relational integrity (User, Transaction, Budget) and cascade delete rules. Created JWT authentication middleware in server/src/middleware/auth.js with token verification and owner-scoped user context attachment. Created rate limiting middleware in server/src/middleware/rateLimiter.js with strict 5 requests per 15 min protection on auth routes. Installed dependencies and generated Prisma client. Staged, committed, and pushed changes to main branch.
+
+Agent Response Summary:
+Configured secure relational PostgreSQL schema in Prisma with user-scoped isolation constraints. Implemented token-based authentication middleware validating JWT signatures and expiry, alongside express-rate-limit protection against brute force. Generated Prisma client, committed with exact commit message, and synced with GitHub.
+
+Commit SHA:
+22ac521
+
+Files Modified / Created:
+* server/package.json (Created)
+* server/prisma/schema.prisma (Created)
+* server/src/middleware/auth.js (Created)
+* server/src/middleware/rateLimiter.js (Created)
+* package-lock.json (Created)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Created server/package.json with backend dependencies
+* Defined schema.prisma with User, Transaction, and Budget models
+* Implemented auth.js and rateLimiter.js middleware
+* Ran npm install and npx prisma generate
+* Staged and committed changes with commit message 'feat(server): define secure Prisma schema, auth middleware, and rate limiters'
+* Pushed commit to remote main branch
+

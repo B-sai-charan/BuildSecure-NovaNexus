@@ -291,3 +291,66 @@ Actions Taken:
 * Mounted AI routes in Express app and updated server/.env.example
 * Staged, committed with message 'feat(server): implement secure AES-256-GCM AI key storage and insight generation', and pushed to main
 
+================================================================================
+[2026-10-05T19:44:04+05:30] Step 5: Frontend MVP & Secure React Dashboard
+================================================================================
+User Prompt (verbatim):
+Please execute Step 5: Frontend MVP & Secure React Dashboard.
+
+1. Navigate to the `client/` workspace.
+2. Install necessary dependencies: `react-router-dom`, `axios`, `recharts` (for financial charts), `lucide-react` (for icons), and ensure Tailwind CSS is properly initialized and configured.
+3. Create a secure API client (`client/src/api/axiosConfig.js`) that automatically attaches the JWT to the `Authorization: Bearer <token>` header. Store the JWT in `sessionStorage` (rather than `localStorage`) to reduce persistent XSS exposure.
+4. Implement the core UI components and pages in `client/src/`:
+   - `AuthContext.jsx`: Manage user state and login/logout functions.
+   - `pages/Login.jsx` & `pages/Register.jsx`: Secure authentication forms with client-side validation and error handling.
+   - `pages/Dashboard.jsx`: The main view featuring a financial summary (Income vs. Expense), a Recharts visualization, and a recent transaction table.
+   - `pages/Transactions.jsx`: A secure form to add new transactions (Type, Category, Amount) and view history.
+   - `pages/Settings.jsx`: A dedicated secure zone for users to input their BYO AI API Key (calling `/api/ai/key`), view their key status, and export their transaction data.
+5. Implement `components/AiAssistant.jsx`: A dashboard widget that triggers the `/api/ai/generate` endpoint and displays the decrypted AI insights alongside the mandatory "not financial advice" disclaimer.
+6. Wire up the routing in `client/src/App.jsx`, wrapping all protected routes (Dashboard, Transactions, Settings) in an `AuthGuard` component that redirects unauthorized users to the login page.
+7. Stage all new files and commit with the exact message:
+   `feat(client): build secure React frontend MVP and dashboard UI`
+8. Push the commit to the `main` branch.
+
+Once finished, provide a brief summary of the frontend architecture, `git status`, and `git log -1`.
+
+Agent Response:
+Constructed the complete React 18 + Vite + Tailwind CSS frontend in client/. Implemented secure Axios interceptors reading JWT from sessionStorage to mitigate persistent XSS. Created AuthContext, AuthGuard, Navbar, Login, Register (with real-time NIST SP 800-63B password checklist), Dashboard (with Recharts cashflow and category distribution graphs), Transactions (with owner-scoped mutations and search/filters), Settings (with BYO AI key vault and CSV/JSON export), and the AiAssistant component with mandatory disclaimer banners. Verified production build and pushed to GitHub main.
+
+Agent Response Summary:
+Engineered full-featured secure React frontend MVP conforming to OWASP ASVS guidelines. Bound all protected routes via AuthGuard, styled with modern fintech glassmorphism aesthetics, integrated Recharts visualizations, and enabled BYO-AI encrypted key management. Staged, committed, and synced to GitHub.
+
+Commit SHA:
+3accab1
+
+Files Modified / Created:
+* client/package.json (Created)
+* client/vite.config.js (Created)
+* client/tailwind.config.js (Created)
+* client/postcss.config.js (Created)
+* client/index.html (Created)
+* client/src/index.css (Created)
+* client/src/api/axiosConfig.js (Created)
+* client/src/context/AuthContext.jsx (Created)
+* client/src/components/AuthGuard.jsx (Created)
+* client/src/components/Navbar.jsx (Created)
+* client/src/components/AiAssistant.jsx (Created)
+* client/src/pages/Login.jsx (Created)
+* client/src/pages/Register.jsx (Created)
+* client/src/pages/Dashboard.jsx (Created)
+* client/src/pages/Transactions.jsx (Created)
+* client/src/pages/Settings.jsx (Created)
+* client/src/App.jsx (Created)
+* client/src/main.jsx (Created)
+* package-lock.json (Modified)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Initialized React, Vite, Tailwind CSS, Recharts, Lucide React, and Axios
+* Created secure Axios client using sessionStorage and automatic 401 interceptor
+* Built AuthContext and AuthGuard for authenticated route management
+* Implemented Login, Register with NIST complexity validation, Dashboard, Transactions, and Settings pages
+* Implemented AiAssistant widget with mandatory disclaimer banner
+* Verified production compilation via npm run build
+* Staged, committed with message 'feat(client): build secure React frontend MVP and dashboard UI', and pushed to main
+

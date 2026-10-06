@@ -12,7 +12,7 @@ import AdminDashboard from './pages/AdminDashboard';
 
 export const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
         <Routes>
           {/* Public Authentication Routes */}

@@ -1,7 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
+import { prisma } from '../src/utils/prisma.js';
 
-const prisma = new PrismaClient();
+dotenv.config();
+
 const BCRYPT_SALT_ROUNDS = 12;
 
 async function main() {
@@ -125,10 +127,7 @@ async function main() {
     },
   ];
 
-  for (const tx of syntheticTransactions) {
-    await prisma.transaction.create({ data: tx });
-  }
-
+  await prisma.transaction.createMany({ data: syntheticTransactions });
   console.log(`[FinTrack Seeder] Seeded ${syntheticTransactions.length} realistic owner-scoped transactions.`);
 
   // 5. Seed Default Budgets
@@ -140,10 +139,7 @@ async function main() {
     { category: 'Tech & Subscriptions', amountLimit: 100.0, userId: demoUser.id },
   ];
 
-  for (const b of defaultBudgets) {
-    await prisma.budget.create({ data: b });
-  }
-
+  await prisma.budget.createMany({ data: defaultBudgets });
   console.log(`[FinTrack Seeder] Seeded ${defaultBudgets.length} category budgets.`);
   console.log('[FinTrack Seeder] Seeding finished successfully.');
 }
@@ -155,4 +151,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    process.exit(0);
   });

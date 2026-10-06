@@ -2,11 +2,13 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import AuthGuard from './components/AuthGuard';
+import AdminRoute from './components/AdminRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
+import AdminDashboard from './pages/AdminDashboard';
 
 export const App = () => {
   return (
@@ -40,6 +42,16 @@ export const App = () => {
               <AuthGuard>
                 <Settings />
               </AuthGuard>
+            }
+          />
+
+          {/* Protected RBAC Administrative Console */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
             }
           />
 

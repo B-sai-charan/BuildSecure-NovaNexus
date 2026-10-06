@@ -12,6 +12,8 @@ import {
   VolumeX,
   Lock,
   Zap,
+  ShieldAlert,
+  Crown,
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -35,6 +37,9 @@ export const Navbar = () => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Transactions', path: '/transactions', icon: Receipt },
     { name: 'Security & Keys', path: '/settings', icon: Settings },
+    ...(user?.role === 'ADMIN'
+      ? [{ name: 'Admin Console', path: '/admin', icon: ShieldAlert }]
+      : []),
   ];
 
   return (
@@ -119,12 +124,17 @@ export const Navbar = () => {
 
             {/* User Session Chip */}
             <div className="hidden lg:flex flex-col text-right px-3 py-1 bg-surface-card rounded-lg border border-white/10">
-              <span className="text-xs font-semibold text-slate-200 truncate max-w-[160px]">
+              <span className="text-xs font-semibold text-slate-200 truncate max-w-[160px] flex items-center justify-end gap-1">
+                {user?.role === 'ADMIN' && <Crown className="w-3 h-3 text-purple-400" />}
                 {user?.email}
               </span>
-              <span className="text-[9px] text-emerald-400 font-mono flex items-center justify-end gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Owner-Scoped
+              <span className={`text-[9px] font-mono flex items-center justify-end gap-1 ${
+                user?.role === 'ADMIN' ? 'text-purple-300' : 'text-emerald-400'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                  user?.role === 'ADMIN' ? 'bg-purple-400' : 'bg-emerald-400'
+                }`}></span>
+                {user?.role === 'ADMIN' ? 'RBAC: ADMIN' : 'Owner-Scoped'}
               </span>
             </div>
 

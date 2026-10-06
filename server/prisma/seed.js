@@ -22,10 +22,22 @@ async function main() {
     await prisma.user.delete({ where: { id: existingUser.id } });
   }
 
-  // 2. Hash demo user password with bcrypt salt rounds = 12
-  const passwordHash = await bcrypt.hash(rawPassword, BCRYPT_SALT_ROUNDS);
+  const adminEmail = 'admin@novanexus.com';
+  const rawAdminPassword = 'SecureAdmin!123';
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: adminEmail },
+  });
 
-  // 3. Create Demo User
+  if (existingAdmin) {
+    console.log(`[FinTrack Seeder] Cleaning prior admin record for ${adminEmail}...`);
+    await prisma.user.delete({ where: { id: existingAdmin.id } });
+  }
+
+  // 2. Hash passwords with bcrypt salt rounds = 12
+  const passwordHash = await bcrypt.hash(rawPassword, BCRYPT_SALT_ROUNDS);
+  const adminPasswordHash = await bcrypt.hash(rawAdminPassword, BCRYPT_SALT_ROUNDS);
+
+  // 3. Create Demo User & Admin User
   const demoUser = await prisma.user.create({
     data: {
       email: demoEmail,
@@ -34,7 +46,16 @@ async function main() {
     },
   });
 
-  console.log(`[FinTrack Seeder] Created Demo User: ${demoUser.email} (ID: ${demoUser.id})`);
+  const adminUser = await prisma.user.create({
+    data: {
+      email: adminEmail,
+      passwordHash: adminPasswordHash,
+      role: 'ADMIN',
+    },
+  });
+
+  console.log(`[FinTrack Seeder] Created Demo User: ${demoUser.email} (ID: ${demoUser.id}, Role: USER)`);
+  console.log(`[FinTrack Seeder] Created Admin User: ${adminUser.email} (ID: ${adminUser.id}, Role: ADMIN)`);
 
   // 4. Generate Realistic Synthetic Transactions (Last 30 Days)
   const now = new Date();

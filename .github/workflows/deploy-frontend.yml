@@ -32,7 +32,9 @@ jobs:
         run: npm run build --workspace=client
 
       - name: Duplicate index.html to 404.html for SPA Client-Side Routing
-        run: cp client/dist/index.html client/dist/404.html
+        run: |
+          cp client/dist/index.html client/dist/404.html
+          touch client/dist/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

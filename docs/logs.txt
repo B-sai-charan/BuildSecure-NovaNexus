@@ -677,6 +677,65 @@ Actions Taken:
 * Updated metadata/submission.yaml with active commit SHA
 * Staged, committed with message 'chore: configure dynamic API base URL for Vercel deployment', and pushed to main
 
+================================================================================
+[2026-10-06T14:38:41+05:30] Configure Production Start Scripts & Railway Monorepo Deployment
+================================================================================
+User Prompt (verbatim):
+I am trying to deploy a Vite/React frontend to Railway from a Node.js monorepo using npm workspaces. My project structure has a backend workspace and a frontend workspace. The frontend workspace is named fintrack-client.
+
+The backend deployed successfully, but the frontend keeps resulting in an "Application failed to respond" (502 Bad Gateway) error on Railway.
+
+Here is my current situation:
+
+I am building from the root of the repository so Railway can read the monorepo package.json.
+
+The Root Directory in Railway settings is blank.
+
+The frontend builds successfully using npm install && npm run build --workspace=fintrack-client.
+
+The deployment fails at the Start Command stage. I either get a "Missing script: preview" error, or the server silently fails to bind to Railway's dynamic network $PORT.
+
+Please provide the bulletproof, exact Railway configuration required to serve this Vite application. Specifically, I need:
+
+The exact Root Directory setting (if it should be changed).
+
+The exact Custom Build Command.
+
+The exact Custom Start Command using either serve or vite preview that guarantees the app binds to 0.0.0.0 and correctly utilizes Railway's dynamic $PORT within an npm workspace.
+
+An alternative railway.toml file configuration if UI settings are insufficient.
+
+Agent Response:
+Diagnosed and resolved the Railway frontend monorepo 502 Bad Gateway and start command failure:
+1. Root Cause Analysis: In an npm monorepo when Root Directory is left blank, Railway attempts to run start scripts in the root `package.json` rather than the workspace. Moreover, `vite preview` is in `devDependencies` (which may be omitted or pruned in production) and binds to localhost `127.0.0.1:4173` rather than `0.0.0.0:$PORT`.
+2. Added Production Static SPA Server (`serve`): Added `"serve": "^14.2.4"` directly to `client/package.json` dependencies and configured `"start": "serve -s dist -l ${PORT:-5173}"` with SPA single-page routing support (`-s`).
+3. Monorepo Scripts: Configured root `package.json` with `"start:client": "npm run start --workspace=client"`, `"build:client": "npm run build --workspace=client"`, and `"start": "npm run start --workspace=client"`.
+4. Railway Configuration File (`railway.toml`): Authored `railway.toml` at repo root specifying builder NIXPACKS, build command `npm run build --workspace=client`, and start command `npx serve -s client/dist -l $PORT`.
+5. Committed changes and pushed to GitHub main.
+
+Agent Response Summary:
+Configured production SPA serving via serve in client/package.json and monorepo scripts. Authored root railway.toml, committed changes, and pushed to GitHub main.
+
+Commit SHA:
+c8155819777553b3f46f3a3f0190a6ea15340809
+
+Files Modified / Created:
+* package.json (Modified)
+* client/package.json (Modified)
+* package-lock.json (Modified)
+* railway.toml (Created)
+* metadata/submission.yaml (Modified)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Added serve dependency and start script to client/package.json
+* Added build:client and start:client scripts to root package.json
+* Authored railway.toml for monorepo frontend deployment
+* Verified build via npm run build:client
+* Updated metadata/submission.yaml and docs/logs.txt
+* Staged, committed, and pushed changes to main
+
+
 
 
 

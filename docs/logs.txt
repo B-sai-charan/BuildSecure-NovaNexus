@@ -735,6 +735,103 @@ Actions Taken:
 * Updated metadata/submission.yaml and docs/logs.txt
 * Staged, committed, and pushed changes to main
 
+================================================================================
+[2026-10-06T14:59:11+05:30] Deploy Fail-Safe Dedicated Node Static SPA Server for Railway
+================================================================================
+User Prompt (verbatim):
+The fintrack-client frontend service on Railway is failing to serve with an "Application failed to respond" (502 Bad Gateway) error.
+
+Here is the current context:
+
+Repository: Monorepo with workspaces (client and server).
+
+Railway root directory is currently blank (root of repo).
+
+Even with serve or vite preview, Railway's proxy is failing to connect to the open port or the process terminates prematurely.
+
+Please resolve this completely in the codebase and push the fix to main:
+
+Add a dedicated, fail-safe Node static server for client:
+
+Create a minimal Node script (e.g., using express or Node's native http module with a lightweight static handler) inside client/ that:
+
+Serves the built client/dist directory.
+
+Implements an SPA fallback (* -> client/dist/index.html).
+
+Listens explicitly on 0.0.0.0 and binds dynamically to process.env.PORT || 8080.
+
+Logs Server running on port ${PORT} on startup so Railway logs show unambiguous proof of life.
+
+Update Scripts in package.json:
+
+Ensure client/package.json has:
+
+"build": "vite build"
+
+"start": "node <path-to-static-server-script>"
+
+Ensure root package.json has:
+
+"build:client": "npm run build --workspace=client"
+
+"start:client": "npm run start --workspace=client"
+
+Update railway.toml:
+
+Explicitly define the build and start commands for Railway Nixpacks so zero manual UI configuration is required:
+
+buildCommand = "npm install && npm run build:client"
+
+startCommand = "npm run start:client"
+
+Test & Deploy:
+
+Run the build locally to verify client/dist generates properly without TypeScript/Vite errors.
+
+Commit and push all changes directly to origin main.
+
+Agent Response:
+Implemented and deployed a dedicated, zero-dependency Node static SPA web server in `client/server.js`:
+1. Dedicated Node SPA Server (`client/server.js`):
+   - Created native Node.js HTTP server utilizing standard built-in modules (`http`, `fs`, `path`, `url`), eliminating third-party CLI runtime startup failures.
+   - Comprehensive MIME type mapping (`.html`, `.js`, `.css`, `.json`, `.svg`, `.png`, `.webp`, `.woff2`, etc.).
+   - Implemented Single-Page Application (SPA) fallback serving `dist/index.html` on any route navigation with path traversal safety.
+   - Explicitly binds to host `0.0.0.0` and listens dynamically on `parseInt(process.env.PORT || '8080', 10)`.
+   - Emits instant startup log: `[FinTrack Frontend] Production SPA Server running on http://0.0.0.0:${PORT}` and `[FinTrack Frontend] Railway Proof of Life: READY (Port: ${PORT})`.
+2. Package Scripts Configuration:
+   - Configured `client/package.json` with `"build": "vite build"` and `"start": "node server.js"`.
+   - Configured root `package.json` with `"build:client": "npm run build --workspace=client"` and `"start:client": "npm run start --workspace=client"`.
+3. Railway Configuration (`railway.toml`):
+   - Configured `railway.toml` with `buildCommand = "npm install && npm run build:client"` and `startCommand = "npm run start:client"`.
+4. Verification & Testing:
+   - Tested local production compilation via `npm run build:client` (2,440 modules compiled cleanly).
+   - Tested `client/server.js` listener binding and confirmed valid HTTP 200 response.
+   - Staged, committed, and pushed all changes to GitHub `origin main`.
+
+Agent Response Summary:
+Created dedicated zero-dependency Node static SPA server in client/server.js binding to 0.0.0.0:$PORT with SPA fallbacks. Configured monorepo package scripts, updated railway.toml, verified production build, and pushed to GitHub main.
+
+Commit SHA:
+95187219f7082f1e61f76b3641fb04ac57d4c646
+
+Files Modified / Created:
+* client/server.js (Created)
+* client/package.json (Modified)
+* package.json (Modified)
+* railway.toml (Modified)
+* metadata/submission.yaml (Modified)
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Created native HTTP SPA static server in client/server.js binding to 0.0.0.0 and process.env.PORT
+* Updated scripts in client/package.json and root package.json
+* Updated railway.toml with buildCommand and startCommand
+* Verified build via npm run build:client and tested server.js locally
+* Updated metadata/submission.yaml and docs/logs.txt
+* Staged, committed, and pushed changes to main
+
+
 
 
 

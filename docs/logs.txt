@@ -853,6 +853,42 @@ Actions Taken:
 * Verified git repository synchronization state with origin/main
 * Updated docs/logs.txt with turn entry
 
+================================================================================
+[2026-10-06T15:15:03+05:30] Railway UI Override Reset & CLI Deployment Troubleshooting
+================================================================================
+User Prompt (verbatim):
+You recently helped me push a client/server.js production server and a railway.toml configuration file to my GitHub main branch to fix a 502 Bad Gateway error on my Vite/React frontend.
+
+However, the live Railway link is still showing the error. I suspect Railway is ignoring the TOML file because of manual commands I previously entered in the Railway UI.
+
+Since I cannot share my Railway login credentials with you, please provide:
+
+A foolproof, click-by-click guide on exactly which fields I need to delete or reset in the Railway UI to force it to use our new TOML file.
+
+The exact Railway CLI commands I can run in my local terminal to clear out the old UI overrides, link my project, and trigger a fresh, clean deployment from the CLI.
+
+Instructions on how to check the specific Railway container logs to see if it is still looking for the wrong directory.
+
+Agent Response:
+Provided a comprehensive, click-by-click manual override reset guide and CLI deployment workflow:
+1. Railway UI Override Hierarchy: Explained that manual entries in the Railway UI Settings tab override `railway.toml`. Provided exact steps to clear the custom Build Command, Start Command, and Root Directory fields (or explicitly enter `npm run build:client` and `npm run start:client`), forcing Railway to utilize the committed `railway.toml` and `client/server.js`.
+2. Railway CLI Execution: Detailed step-by-step commands to install the Railway CLI (`npm i -g @railway/cli`), authenticate (`railway login`), link the project (`railway link`), inspect environment variables, and trigger a fresh build via `railway up` or `railway redeploy`.
+3. Log Diagnostics: Provided specific log patterns to check in Railway's Deploy Logs (e.g. verifying `[FinTrack Frontend] Production SPA Server running on http://0.0.0.0:<PORT>` vs error codes like `npm ERR! missing script`).
+
+Agent Response Summary:
+Delivered complete step-by-step instructions for resetting stale Railway UI build/start overrides, deploying via Railway CLI, and inspecting container runtime logs.
+
+Commit SHA:
+19e0c9ee5349e5d6d34eec35d3d4b684cb3a1fae
+
+Files Modified / Created:
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Appended turn entry to docs/logs.txt
+* Committed and pushed to GitHub main
+
+
 
 
 

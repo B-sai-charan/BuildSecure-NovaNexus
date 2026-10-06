@@ -1043,7 +1043,7 @@ Agent Response Summary:
 Expanded CORS allowed origins in server/src/app.js to support localhost:5173, localhost:8080, and https://b-sai-charan.github.io with credentials: true. Committed and pushed changes to GitHub main for automatic Railway backend redeployment.
 
 Commit SHA:
-51bab354b7af88150f2f870945350d7d0ddbcc33
+a89408ba5ca2cb849eb28114f49495c0294155b5
 
 Files Modified / Created:
 * server/src/app.js (Modified)

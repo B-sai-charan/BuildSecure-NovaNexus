@@ -9,7 +9,17 @@ import {
   AlertCircle,
   CheckCircle2,
   XCircle,
+  Sparkles,
+  KeyRound,
+  Fingerprint,
 } from 'lucide-react';
+import {
+  playHover,
+  playClick,
+  playSuccess,
+  playError,
+  playSecurityArm,
+} from '../utils/soundEngine';
 
 export const Register = () => {
   const { register } = useAuth();
@@ -34,19 +44,25 @@ export const Register = () => {
     match: password.length > 0 && password === formData.confirmPassword,
   };
 
+  const passedCount = Object.values(checks).filter(Boolean).length;
+  const strengthPercent = Math.min(100, Math.round((passedCount / 6) * 100));
+
   const isPasswordCompliant =
     checks.length && checks.upper && checks.lower && checks.number && checks.special;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    playClick();
     setError('');
 
     if (!isPasswordCompliant) {
+      playError();
       setError('Please fulfill all NIST SP 800-63B password security requirements.');
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
+      playError();
       setError('Passwords do not match.');
       return;
     }
@@ -55,8 +71,11 @@ export const Register = () => {
 
     try {
       await register(formData.email, formData.password);
+      playSecurityArm();
+      playSuccess();
       navigate('/dashboard', { replace: true });
     } catch (err) {
+      playError();
       const msg =
         err.response?.data?.error ||
         err.response?.data?.details?.[0]?.message ||
@@ -68,28 +87,32 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Cyber Grid & Glows */}
+      <div className="absolute inset-0 bg-cyber-grid bg-[size:32px_32px] opacity-25 pointer-events-none"></div>
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center z-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 p-0.5 shadow-xl shadow-emerald-500/20 mb-4">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-400 p-0.5 shadow-2xl shadow-emerald-500/25 mb-4 animate-glow">
           <div className="w-full h-full bg-[#0B0F19] rounded-[14px] flex items-center justify-center">
-            <ShieldCheck className="w-8 h-8 text-emerald-400" />
+            <ShieldCheck className="w-9 h-9 text-emerald-400" />
           </div>
         </div>
-        <h2 className="text-2xl font-extrabold text-white tracking-tight">
-          Create Secure Account
+        <h2 className="text-3xl font-extrabold text-white tracking-tight font-space">
+          Create Encrypted Vault
         </h2>
-        <p className="mt-2 text-xs text-slate-400">
-          NIST SP 800-63B Password Defense & Owner-Scoped Database Scoping
+        <p className="mt-2 text-xs text-slate-400 font-mono">
+          NIST SP 800-63B Defense • ASVS 4.0 Verified
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md z-10">
-        <div className="glass-panel py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-white/10">
+        <div className="glass-panel py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-white/10 backdrop-blur-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500"></div>
+
           {error && (
-            <div className="mb-6 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2.5">
+            <div className="mb-6 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-fadeIn">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -97,8 +120,8 @@ export const Register = () => {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Email Address
+              <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
+                Work Email Address
               </label>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -110,15 +133,15 @@ export const Register = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="glass-input block w-full pl-10 pr-4 py-2.5 sm:text-sm rounded-xl"
-                  placeholder="name@example.com"
+                  placeholder="name@company.com"
                   autoComplete="email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                Password
+              <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
+                Cryptographic Password
               </label>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -129,61 +152,113 @@ export const Register = () => {
                   required
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="glass-input block w-full pl-10 pr-4 py-2.5 sm:text-sm rounded-xl"
-                  placeholder="At least 12 characters..."
+                  className="glass-input block w-full pl-10 pr-4 py-2.5 sm:text-sm rounded-xl font-mono"
+                  placeholder="Minimum 12 chars (Upper, lower, num, sym)"
                   autoComplete="new-password"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+              <label className="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5 font-mono">
                 Confirm Password
               </label>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-slate-400" />
+                  <KeyRound className="h-4 w-4 text-slate-400" />
                 </div>
                 <input
                   type="password"
                   required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="glass-input block w-full pl-10 pr-4 py-2.5 sm:text-sm rounded-xl"
-                  placeholder="Repeat password..."
+                  className="glass-input block w-full pl-10 pr-4 py-2.5 sm:text-sm rounded-xl font-mono"
+                  placeholder="Repeat exact password..."
                   autoComplete="new-password"
                 />
               </div>
             </div>
 
-            {/* NIST SP 800-63B Compliance Checklist */}
-            <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/5 space-y-1.5 text-[11px]">
-              <span className="font-semibold text-slate-300 block mb-1">
-                NIST SP 800-63B Password Complexity:
-              </span>
-              <div className="grid grid-cols-2 gap-1.5">
-                <div className={`flex items-center gap-1.5 ${checks.length ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.length ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                  <span>Minimum 12 characters</span>
+            {/* Password Entropy & Strength Meter */}
+            <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/5 space-y-2.5 text-[11px]">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-slate-300 font-mono text-[10px] uppercase">
+                  Entropy & NIST Complexity:
+                </span>
+                <span
+                  className={`font-mono text-[10px] font-bold ${
+                    strengthPercent === 100
+                      ? 'text-emerald-400'
+                      : strengthPercent >= 60
+                      ? 'text-amber-400'
+                      : 'text-slate-500'
+                  }`}
+                >
+                  {strengthPercent}% Security Strength
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    strengthPercent === 100
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
+                      : strengthPercent >= 60
+                      ? 'bg-gradient-to-r from-amber-500 to-yellow-400'
+                      : 'bg-rose-500'
+                  }`}
+                  style={{ width: `${strengthPercent}%` }}
+                ></div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-1.5 pt-1">
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.length ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.length ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span>&ge; 12 characters</span>
                 </div>
-                <div className={`flex items-center gap-1.5 ${checks.upper ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.upper ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                  <span>Uppercase letter (A-Z)</span>
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.upper ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.upper ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span>Uppercase (A-Z)</span>
                 </div>
-                <div className={`flex items-center gap-1.5 ${checks.lower ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.lower ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                  <span>Lowercase letter (a-z)</span>
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.lower ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.lower ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span>Lowercase (a-z)</span>
                 </div>
-                <div className={`flex items-center gap-1.5 ${checks.number ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.number ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                  <span>Numeric digit (0-9)</span>
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.number ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.number ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span>Number (0-9)</span>
                 </div>
-                <div className={`flex items-center gap-1.5 ${checks.special ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.special ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                  <span>Special character (!@#)</span>
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.special ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.special ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                  <span>Special symbol</span>
                 </div>
-                <div className={`flex items-center gap-1.5 ${checks.match ? 'text-emerald-400' : 'text-slate-400'}`}>
-                  {checks.match ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                <div
+                  className={`flex items-center gap-1.5 transition-colors ${
+                    checks.match ? 'text-emerald-400 font-medium' : 'text-slate-500'
+                  }`}
+                >
+                  {checks.match ? <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" /> : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
                   <span>Passwords match</span>
                 </div>
               </div>
@@ -191,15 +266,17 @@ export const Register = () => {
 
             <button
               type="submit"
-              disabled={loading || !isPasswordCompliant}
-              className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-emerald-500/20 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-all cursor-pointer mt-2"
+              disabled={loading || !isPasswordCompliant || !checks.match}
+              onMouseEnter={() => playHover()}
+              className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-lg shadow-emerald-500/20 text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 hover:from-emerald-500 hover:to-teal-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer mt-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <span>Create Encrypted Vault</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <Fingerprint className="w-4 h-4 text-emerald-200" />
+                  <span>Register & Initialize Vault</span>
+                  <ArrowRight className="w-4 h-4 text-emerald-200" />
                 </>
               )}
             </button>
@@ -207,9 +284,14 @@ export const Register = () => {
 
           <div className="mt-6 pt-6 border-t border-white/5 text-center">
             <p className="text-xs text-slate-400">
-              Already have an account?{' '}
-              <Link to="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">
-                Sign in here
+              Already have an active vault?{' '}
+              <Link
+                to="/login"
+                onMouseEnter={() => playHover()}
+                onClick={() => playClick()}
+                className="font-semibold text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                Sign In
               </Link>
             </p>
           </div>

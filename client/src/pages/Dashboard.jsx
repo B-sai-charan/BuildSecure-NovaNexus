@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../api/axiosConfig';
 import Navbar from '../components/Navbar';
 import AiAssistant from '../components/AiAssistant';
+import sound from '../utils/soundEngine';
 import {
   TrendingUp,
   TrendingDown,
@@ -14,6 +15,12 @@ import {
   ArrowDownRight,
   PieChart as PieIcon,
   Calendar,
+  Lock,
+  Zap,
+  Activity,
+  Sparkles,
+  Layers,
+  ArrowRight,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -29,7 +36,7 @@ import {
   Legend,
 } from 'recharts';
 
-const COLORS = ['#10B981', '#06B6D4', '#6366F1', '#F43F5E', '#F59E0B', '#8B5CF6', '#EC4899'];
+const COLORS = ['#10B981', '#06B6D4', '#8B5CF6', '#F43F5E', '#F59E0B', '#3B82F6', '#EC4899'];
 
 export const Dashboard = () => {
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpenses: 0, netBalance: 0 });
@@ -75,7 +82,7 @@ export const Dashboard = () => {
 
       const areaData = Object.values(dateMap).reverse();
       setTimelineData(areaData.length > 0 ? areaData : [
-        { date: 'Initial', income: summaryRes.data.summary?.totalIncome || 0, expense: summaryRes.data.summary?.totalExpenses || 0 }
+        { date: 'Active', income: summaryRes.data.summary?.totalIncome || 0, expense: summaryRes.data.summary?.totalExpenses || 0 }
       ]);
     } catch (err) {
       console.error('Failed to load dashboard metrics:', err);
@@ -93,105 +100,136 @@ export const Dashboard = () => {
     : 0;
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-[#070A13] text-slate-100 flex flex-col bg-cyber-grid">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-              Financial Overview & Telemetry
-            </h1>
-            <p className="text-xs text-slate-400 mt-1">
-              Zero-Trust Owner-Scoped Data Isolation & Real-Time Encryption
-            </p>
-          </div>
+        {/* Hero Banner with Security Badge */}
+        <div className="relative glass-panel rounded-3xl p-6 sm:p-8 overflow-hidden border border-white/10 bg-gradient-to-r from-[#0C1226]/90 via-[#0E1730]/85 to-[#0A0F20]/90 shadow-2xl">
+          <div className="absolute right-0 top-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-mono font-bold mb-3">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>SYSTEM ACTIVE • OWASP ASVS LEVEL 2</span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-display">
+                Zero-Trust Financial Intelligence
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+                Real-time cryptographic ledger with owner-scoped data isolation and in-memory AES-256-GCM AI synthesis.
+              </p>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              to="/transactions"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-semibold shadow-lg shadow-emerald-500/20 transition-all cursor-pointer"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Record Transaction</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                to="/transactions"
+                onClick={() => sound.playClick()}
+                onMouseEnter={() => sound.playHover()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 text-xs font-bold shadow-neon-emerald transition-all btn-interactive cursor-pointer"
+              >
+                <PlusCircle className="w-4 h-4 text-slate-950" />
+                <span>New Transaction</span>
+              </Link>
+
+              <Link
+                to="/settings"
+                onClick={() => sound.playClick()}
+                onMouseEnter={() => sound.playHover()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 text-xs font-semibold transition-all btn-interactive cursor-pointer"
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>Security Audit</span>
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {/* Net Balance Card */}
-          <div className="glass-panel p-5 rounded-2xl border border-white/5 relative overflow-hidden">
+          <div
+            onMouseEnter={() => sound.playHover()}
+            className="glass-panel-interactive p-6 rounded-2xl relative overflow-hidden group"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Net Balance</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                <Wallet className="w-4 h-4" />
+              <span className="text-xs font-bold text-slate-400 uppercase font-mono tracking-wider">Net Balance</span>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                <Wallet className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-3">
-              <span className={`text-2xl font-extrabold ${summary.netBalance >= 0 ? 'text-white' : 'text-rose-400'}`}>
+            <div className="mt-4">
+              <span className={`text-3xl font-extrabold font-mono tracking-tight ${summary.netBalance >= 0 ? 'text-white' : 'text-rose-400'}`}>
                 ${summary.netBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             </div>
-            <div className="mt-2 text-[11px] text-emerald-400 flex items-center gap-1 font-mono">
-              <ShieldCheck className="w-3 h-3" />
-              <span>Verified Ledger Balance</span>
+            <div className="mt-3 text-[11px] text-emerald-400 flex items-center gap-1.5 font-mono">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Verified Cryptographic Ledger</span>
             </div>
           </div>
 
           {/* Total Income */}
-          <div className="glass-panel p-5 rounded-2xl border border-white/5">
+          <div
+            onMouseEnter={() => sound.playHover()}
+            className="glass-panel-interactive p-6 rounded-2xl relative overflow-hidden group"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Inflow</span>
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-                <TrendingUp className="w-4 h-4" />
+              <span className="text-xs font-bold text-slate-400 uppercase font-mono tracking-wider">Total Inflow</span>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                <TrendingUp className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-3">
-              <span className="text-2xl font-extrabold text-emerald-400">
+            <div className="mt-4">
+              <span className="text-3xl font-extrabold text-emerald-400 font-mono tracking-tight">
                 +${summary.totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             </div>
-            <div className="mt-2 text-[11px] text-slate-400 flex items-center gap-1">
-              <ArrowUpRight className="w-3 h-3 text-emerald-400" />
-              <span>Accumulated Income</span>
+            <div className="mt-3 text-[11px] text-slate-400 flex items-center gap-1 font-mono">
+              <ArrowUpRight className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Verified Direct Deposits</span>
             </div>
           </div>
 
           {/* Total Expenses */}
-          <div className="glass-panel p-5 rounded-2xl border border-white/5">
+          <div
+            onMouseEnter={() => sound.playHover()}
+            className="glass-panel-interactive p-6 rounded-2xl relative overflow-hidden group"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Outflow</span>
-              <div className="w-8 h-8 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400">
-                <TrendingDown className="w-4 h-4" />
+              <span className="text-xs font-bold text-slate-400 uppercase font-mono tracking-wider">Total Outflow</span>
+              <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 group-hover:scale-110 transition-transform">
+                <TrendingDown className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-3">
-              <span className="text-2xl font-extrabold text-rose-400">
+            <div className="mt-4">
+              <span className="text-3xl font-extrabold text-rose-400 font-mono tracking-tight">
                 -${summary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </span>
             </div>
-            <div className="mt-2 text-[11px] text-slate-400 flex items-center gap-1">
-              <ArrowDownRight className="w-3 h-3 text-rose-400" />
+            <div className="mt-3 text-[11px] text-slate-400 flex items-center gap-1 font-mono">
+              <ArrowDownRight className="w-3.5 h-3.5 text-rose-400" />
               <span>Discretionary & Fixed Costs</span>
             </div>
           </div>
 
           {/* Savings Rate */}
-          <div className="glass-panel p-5 rounded-2xl border border-white/5">
+          <div
+            onMouseEnter={() => sound.playHover()}
+            className="glass-panel-interactive p-6 rounded-2xl relative overflow-hidden group"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Savings Rate</span>
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                <PieIcon className="w-4 h-4" />
+              <span className="text-xs font-bold text-slate-400 uppercase font-mono tracking-wider">Savings Rate</span>
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-110 transition-transform">
+                <PieIcon className="w-5 h-5" />
               </div>
             </div>
-            <div className="mt-3">
-              <span className="text-2xl font-extrabold text-cyan-400">
+            <div className="mt-4">
+              <span className="text-3xl font-extrabold text-cyan-400 font-mono tracking-tight">
                 {savingsRate}%
               </span>
             </div>
-            <div className="mt-2 text-[11px] text-slate-400">
+            <div className="mt-3 text-[11px] text-slate-400 font-mono">
               Target benchmark: &gt;20.0%
             </div>
           </div>
@@ -203,13 +241,16 @@ export const Dashboard = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Income vs Expense Timeline */}
-          <div className="lg:col-span-2 glass-panel p-6 rounded-2xl border border-white/5">
-            <div className="flex items-center justify-between mb-4">
+          <div className="lg:col-span-2 glass-panel p-6 sm:p-7 rounded-3xl border border-white/10">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-sm font-bold text-white">Cashflow Trajectory</h3>
-                <p className="text-xs text-slate-400">Inflow vs. Outflow Distribution</p>
+                <h3 className="text-base font-bold text-white font-display">Cashflow Trajectory</h3>
+                <p className="text-xs text-slate-400">Inflow vs. Outflow Temporal Distribution</p>
               </div>
-              <span className="text-xs text-slate-400 font-mono bg-white/5 px-2.5 py-1 rounded-md">Live Telemetry</span>
+              <span className="text-xs text-emerald-300 font-mono bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Live Telemetry
+              </span>
             </div>
 
             <div className="h-64 w-full">
@@ -225,25 +266,25 @@ export const Dashboard = () => {
                       <stop offset="95%" stopColor="#F43F5E" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1F2937" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1C2540" vertical={false} />
                   <XAxis dataKey="date" stroke="#64748B" fontSize={11} tickLine={false} />
                   <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', borderRadius: '8px', fontSize: '12px' }}
-                    itemStyle={{ color: '#F3F4F6' }}
+                    contentStyle={{ backgroundColor: '#0B1020', borderColor: '#1F2937', borderRadius: '12px', fontSize: '12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}
+                    itemStyle={{ color: '#F8FAFC' }}
                   />
-                  <Area type="monotone" dataKey="income" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#incomeGrad)" name="Income" />
-                  <Area type="monotone" dataKey="expense" stroke="#F43F5E" strokeWidth={2} fillOpacity={1} fill="url(#expenseGrad)" name="Expense" />
+                  <Area type="monotone" dataKey="income" stroke="#10B981" strokeWidth={2.5} fillOpacity={1} fill="url(#incomeGrad)" name="Income ($)" />
+                  <Area type="monotone" dataKey="expense" stroke="#F43F5E" strokeWidth={2.5} fillOpacity={1} fill="url(#expenseGrad)" name="Expense ($)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
 
           {/* Expense by Category Pie Chart */}
-          <div className="glass-panel p-6 rounded-2xl border border-white/5 flex flex-col justify-between">
+          <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-white/10 flex flex-col justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white">Expense Distribution</h3>
-              <p className="text-xs text-slate-400">Category-Level Cost Breakdown</p>
+              <h3 className="text-base font-bold text-white font-display">Expense Allocation</h3>
+              <p className="text-xs text-slate-400">Category Concentration & Exposure</p>
             </div>
 
             <div className="h-56 w-full my-auto">
@@ -264,84 +305,93 @@ export const Dashboard = () => {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: '#111827', borderColor: '#374151', borderRadius: '8px', fontSize: '12px' }}
-                      formatter={(val) => [`$${Number(val).toFixed(2)}`, 'Spent']}
+                      formatter={(val) => `$${Number(val).toFixed(2)}`}
+                      contentStyle={{ backgroundColor: '#0B1020', borderColor: '#1F2937', borderRadius: '12px', fontSize: '12px' }}
                     />
-                    <Legend wrapperStyle={{ fontSize: '11px', color: '#94A3B8' }} />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex items-center justify-center text-center text-xs text-slate-400">
-                  No expense records logged yet
+                <div className="h-full flex items-center justify-center text-xs text-slate-500 font-mono">
+                  No expense distribution logged yet
                 </div>
               )}
+            </div>
+
+            <div className="flex flex-wrap gap-2 justify-center pt-2">
+              {categoryData.slice(0, 4).map((c, idx) => (
+                <span key={c.name} className="text-[10px] font-mono text-slate-300 flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }}></span>
+                  {c.name}: ${c.value.toFixed(0)}
+                </span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Recent Transactions Table */}
-        <div className="glass-panel rounded-2xl border border-white/5 overflow-hidden">
-          <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        {/* Recent Transactions Feed */}
+        <div className="glass-panel rounded-3xl p-6 sm:p-7 border border-white/10">
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="text-sm font-bold text-white">Recent Ledger Transactions</h3>
-              <p className="text-xs text-slate-400">Owner-Scoped Cryptographic Records</p>
+              <h3 className="text-base font-bold text-white font-display">Recent Activity Feed</h3>
+              <p className="text-xs text-slate-400">Owner-Scoped Cryptographic Ledger Entries</p>
             </div>
             <Link
               to="/transactions"
-              className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold transition-colors flex items-center gap-1"
+              onClick={() => sound.playClick()}
+              onMouseEnter={() => sound.playHover()}
+              className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
             >
-              <span>View All History</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <span>View Full Ledger</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/50 text-slate-400 uppercase tracking-wider text-[10px]">
+              <thead className="bg-[#0B1020] text-slate-400 font-mono uppercase text-[10px] tracking-wider border-b border-white/5">
                 <tr>
-                  <th className="py-3 px-6">Date</th>
-                  <th className="py-3 px-6">Category</th>
-                  <th className="py-3 px-6">Description</th>
-                  <th className="py-3 px-6">Type</th>
-                  <th className="py-3 px-6 text-right">Amount</th>
+                  <th className="px-4 py-3 rounded-l-xl">Date</th>
+                  <th className="px-4 py-3">Category</th>
+                  <th className="px-4 py-3">Description</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3 text-right rounded-r-xl">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {recentTransactions.length > 0 ? (
-                  recentTransactions.map((tx) => (
-                    <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3.5 px-6 text-slate-300 whitespace-nowrap">
-                        {new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                {recentTransactions.slice(0, 6).map((tx) => {
+                  const isIncome = tx.type === 'INCOME';
+                  return (
+                    <tr
+                      key={tx.id}
+                      onMouseEnter={() => sound.playHover()}
+                      className="hover:bg-white/5 transition-colors"
+                    >
+                      <td className="px-4 py-3.5 font-mono text-slate-400">
+                        {new Date(tx.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </td>
-                      <td className="py-3.5 px-6 font-medium text-white whitespace-nowrap">
-                        <span className="px-2 py-0.5 rounded-md bg-white/5 text-slate-200 border border-white/5">
-                          {tx.category}
-                        </span>
+                      <td className="px-4 py-3.5 font-semibold text-slate-200">
+                        {tx.category}
                       </td>
-                      <td className="py-3.5 px-6 text-slate-400 max-w-xs truncate">
+                      <td className="px-4 py-3.5 text-slate-400 truncate max-w-xs">
                         {tx.description || '—'}
                       </td>
-                      <td className="py-3.5 px-6 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          tx.type === 'INCOME' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
+                      <td className="px-4 py-3.5">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                          isIncome
+                            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                            : 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
                         }`}>
                           {tx.type}
                         </span>
                       </td>
-                      <td className={`py-3.5 px-6 text-right font-semibold whitespace-nowrap ${
-                        tx.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400'
+                      <td className={`px-4 py-3.5 text-right font-mono font-bold ${
+                        isIncome ? 'text-emerald-400' : 'text-rose-400'
                       }`}>
-                        {tx.type === 'INCOME' ? '+' : '-'}${tx.amount.toFixed(2)}
+                        {isIncome ? '+' : '-'}${Number(tx.amount).toFixed(2)}
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="text-center py-8 text-slate-400 text-xs">
-                      No transactions found. Click "Record Transaction" above to create your first entry.
-                    </td>
-                  </tr>
-                )}
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -6,6 +6,6 @@ version: "1.0"
 submission:
   team_id: "22"
   repository: "https://github.com/B-sai-charan/BuildSecure-NovaNexus"
-  commit_sha: "527165f8f761324b11f134d1edfd7aa3a4968bcb"
+  commit_sha: "2e19c51b79be5fef344780d18dbd7248df96ccd6"
   deployment_url: "https://b-sai-charan.github.io/BuildSecure-NovaNexus/"
-  submitted_at: "2026-10-06T15:40:00+05:30"
+  submitted_at: "2026-10-06T15:46:00+05:30"

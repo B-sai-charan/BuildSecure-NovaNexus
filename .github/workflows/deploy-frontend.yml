@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Vite Client Workspace
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL || vars.VITE_API_URL || '' }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL || vars.VITE_API_URL || 'https://fintrack-server-production-2f04.up.railway.app' }}
         run: npm run build --workspace=client
 
       - name: Duplicate index.html to 404.html for SPA Client-Side Routing
